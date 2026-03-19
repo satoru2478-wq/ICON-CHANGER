@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICON VAULT PRO | V CONNECT STUDIO</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Orbitron:wght@400;900&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    
+    <style>
+        :root {
+            --accent: #00f2ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-heavy: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.15);
+            --bg: #050505;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { 
+            margin: 0; padding: 0; 
+            background: var(--bg); 
+            color: #fff; 
+            font-family: 'Inter', sans-serif; 
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            perspective: 1000px;
+            background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+        }
+
+        .gyro-container {
+            width: 220px;
+            height: 220px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 45px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            transform-style: preserve-3d;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .gyro-inner {
+            font-family: 'Orbitron';
+            font-weight: 900;
+            font-size: 80px;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(0,242,255,0.5);
+            transform: translateZ(50px);
+        }
+
+        h1 {
+            font-family: 'Syncopate', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 12px;
+            font-size: clamp(1.5rem, 6vw, 4rem);
+            margin: 0;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- CREATOR CARD --- */
+        .section { padding: 60px 20px; text-align: center; }
+        
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 40px 20px;
+            max-width: 550px;
+            margin: auto;
+        }
+
+        .btn {
+            background: #fff;
+            color: #000;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-family: 'Orbitron';
+            font-weight: 900;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--accent); }
+        .btn-magic { background: var(--accent); }
+
+        #image-preview { max-width: 100%; border-radius: 20px; }
+        
+        /* --- VAULT GRID --- */
+        .vault-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 25px;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .icon-wrapper {
+            position: relative;
+            background: var(--glass-heavy);
+            border-radius: 24px;
+            padding: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .saved-icon {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 18px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .btn-action {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            z-index: 5;
+        }
+
+        .delete-x { top: -10px; right: -10px; background: #ff3b30; }
+        .download-v { bottom: -10px; right: -10px; background: #34C759; text-decoration: none; font-size: 12px; }
+
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <div class="gyro-container" id="gyro-box">
+            <div class="gyro-inner">V</div>
+        </div>
+        <h1>Studio</h1>
+        <p style="opacity: 0.5; font-family: 'Orbitron'; letter-spacing: 2px; margin-top: 20px;">Elite Icon Engine</p>
+        <button class="btn" onclick="document.getElementById('creator-sec').scrollIntoView()" style="margin-top: 40px; background: transparent; border: 1px solid #fff; color: #fff;">START ENGINE</button>
+    </section>
+
+    <section class="section" id="creator-sec">
+        <div class="card">
+            <h2 style="font-family: 'Orbitron'; margin-bottom: 30px;">CUSTOMIZE</h2>
+            <input type="file" id="upload" accept="image/*" hidden>
+            <button class="btn" onclick="document.getElementById('upload').click()">CHOOSE IMAGE</button>
+            
+            <div id="crop-area" style="margin: 30px 0; min-height: 200px;">
+                <img id="image-preview" src="">
+            </div>
+
+            <div id="controls" style="display:none;">
+                <button class="btn btn-magic" onclick="magicEraser()">MAGIC ERASE BG</button>
+                <button class="btn" onclick="saveToVault()">SAVE TO VAULT</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="vault-sec">
+        <h1 style="font-size: 1.5rem; letter-spacing: 5px;">MY VAULT</h1>
+        <div class="vault-container" id="vault-grid">
+            </div>
+    </section>
+
+    <canvas id="proc-canvas" style="display:none;"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        // --- 1. GYRO STABILITY LOGIC ---
+        const gyroBox = document.getElementById('gyro-box');
+        let tX = 0, tY = 0, cX = 0, cY = 0;
+
+        window.addEventListener('deviceorientation', (e) => {
+            tX = Math.max(-20, Math.min(20, e.gamma)); 
+            tY = Math.max(-20, Math.min(20, e.beta - 45)); 
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            tX = (window.innerWidth / 2 - e.pageX) / 25;
+            tY = (window.innerHeight / 2 - e.pageY) / 25;
+        });
+
+        function smoothMove() {
+            cX += (tX - cX) * 0.1;
+            cY += (tY - cY) * 0.1;
+            gyroBox.style.transform = `rotateY(${cX}deg) rotateX(${-cY}deg)`;
+            requestAnimationFrame(smoothMove);
+        }
+        smoothMove();
+
+        // --- 2. IMAGE ENGINE ---
+        let cropper;
+        const upload = document.getElementById('upload');
+        const preview = document.getElementById('image-preview');
+
+        upload.onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                preview.src = reader.result;
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(preview, { aspectRatio: 1, viewMode: 1 });
+                document.getElementById('controls').style.display = 'block';
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        function magicEraser() {
+            const canvas = cropper.getCroppedCanvas();
+            const ctx = canvas.getContext('2d');
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
+            const rB = data[0], gB = data[1], bB = data[2];
+
+            for (let i = 0; i < data.length; i += 4) {
+                if (Math.abs(data[i] - rB) < 45 && Math.abs(data[i+1] - gB) < 45 && Math.abs(data[i+2] - bB) < 45) {
+                    data[i+3] = 0;
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+            preview.src = canvas.toDataURL();
+            cropper.replace(preview.src);
+        }
+
+        // --- 3. VAULT MANAGEMENT ---
+        function saveToVault() {
+            const dataUrl = cropper.getCroppedCanvas({ width: 512, height: 512 }).toDataURL("image/png");
+            let vault = JSON.parse(localStorage.getItem('vVault') || '[]');
+            vault.unshift(dataUrl);
+            localStorage.setItem('vVault', JSON.stringify(vault));
+            renderVault();
+            alert("Icon Locked in Vault!");
+        }
+
+        function deleteIcon(index) {
+            let vault = JSON.parse(localStorage.getItem('vVault') || '[]');
+            vault.splice(index, 1);
+            localStorage.setItem('vVault', JSON.stringify(vault));
+            renderVault();
+        }
+
+        function renderVault() {
+            const vault = JSON.parse(localStorage.getItem('vVault') || '[]');
+            const grid = document.getElementById('vault-grid');
+            grid.innerHTML = vault.map((img, i) => `
+                <div class="icon-wrapper">
+                    <button class="btn-action delete-x" onclick="deleteIcon(${i})">×</button>
+                    <a href="${img}" download="v-icon-${i}.png" class="btn-action download-v">↓</a>
+                    <img src="${img}" class="saved-icon" onclick="window.open(this.src)">
+                </div>
+            `).join('');
+        }
+
+        window.onload = renderVault;
+    </script>
+</body>
+</html>
+
