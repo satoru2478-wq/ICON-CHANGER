@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>V CONNECT | ICON VAULT PRO</title>
     
-    <meta name="description" content="Professional PWA Icon Studio and Background Remover">
+    <meta name="description" content="Private PWA Icon Creation Engine by Vedant. No data collection.">
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon.png" type="image/png">
     <link rel="apple-touch-icon" href="icon.png">
 
@@ -13,456 +14,122 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     
     <style>
-        :root {
-            --accent: #00f2ff;
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-heavy: rgba(255, 255, 255, 0.08);
-            --border: rgba(255, 255, 255, 0.1);
-            --bg: #030303;
-        }
+        :root { --accent: #00f2ff; --glass: rgba(255, 255, 255, 0.03); --bg: #030303; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body, html { 
-            margin: 0; padding: 0; 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
+        .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; perspective: 1200px; }
+        .gyro-container { width: 180px; height: 180px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; backdrop-filter: blur(25px); display: flex; align-items: center; justify-content: center; margin-bottom: 40px; transform-style: preserve-3d; transition: transform 0.1s ease-out; }
+        .gyro-inner { font-family: 'Orbitron'; font-weight: 900; font-size: 80px; color: var(--accent); transform: translateZ(50px); }
 
-        /* --- HERO SECTION --- */
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            perspective: 1200px;
-            background: radial-gradient(circle at 50% 50%, #0a0a0a 0%, #000 100%);
-        }
+        h1 { font-family: 'Syncopate', sans-serif; text-transform: uppercase; letter-spacing: 12px; font-size: 2.5rem; background: linear-gradient(#fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .gyro-container {
-            width: 200px;
-            height: 200px;
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            backdrop-filter: blur(25px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 40px;
-            transform-style: preserve-3d;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            transition: transform 0.1s ease-out;
-        }
+        .section { padding: 80px 20px; text-align: center; }
+        .card { background: var(--glass); backdrop-filter: blur(40px); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; padding: 40px 20px; max-width: 450px; margin: auto; }
 
-        /* Using the 'V' text for the 3D effect */
-        .gyro-inner {
-            font-family: 'Orbitron';
-            font-weight: 900;
-            font-size: 90px;
-            color: var(--accent);
-            text-shadow: 0 0 30px rgba(0,242,255,0.4);
-            transform: translateZ(60px);
-        }
-
-        h1 {
-            font-family: 'Syncopate', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 15px;
-            font-size: clamp(1.2rem, 5vw, 3.5rem);
-            margin: 0;
-            background: linear-gradient(to bottom, #fff 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
-        }
-
-        /* --- CREATOR CARD --- */
-        .section { padding: 100px 20px; text-align: center; }
-        
-        .card {
-            background: var(--glass);
-            backdrop-filter: blur(40px);
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            padding: 50px 25px;
-            max-width: 500px;
-            margin: auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .btn {
-            background: #fff;
-            color: #000;
-            padding: 18px 36px;
-            border-radius: 100px;
-            font-family: 'Orbitron';
-            font-weight: 900;
-            font-size: 13px;
-            border: none;
-            cursor: pointer;
-            margin: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.4s cubic-bezier(0.2, 1, 0.2, 1);
-        }
-
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+        .btn { background: #fff; color: #000; padding: 15px 30px; border-radius: 50px; font-family: 'Orbitron'; font-weight: 900; border: none; cursor: pointer; margin: 8px; transition: 0.3s; }
         .btn-magic { background: var(--accent); }
 
-        #image-preview { max-width: 100%; border-radius: 25px; display: block; margin: auto; }
+        .vault-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .icon-wrapper { position: relative; background: rgba(255,255,255,0.05); border-radius: 20px; padding: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        .saved-icon { width: 100%; aspect-ratio: 1/1; border-radius: 15px; object-fit: cover; }
         
-        /* --- VAULT GRID --- */
-        .vault-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 20px;
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 0 20px;
-        }
+        .btn-action { position: absolute; width: 24px; height: 24px; border-radius: 50%; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .del-btn { top: -5px; right: -5px; background: #ff3b30; }
+        .dl-btn { bottom: -5px; right: -5px; background: #34C759; text-decoration: none; }
 
-        .icon-wrapper {
-            position: relative;
-            background: var(--glass-heavy);
-            border-radius: 28px;
-            padding: 8px;
-            border: 1px solid var(--border);
-            transition: 0.3s;
-        }
-
-        .icon-wrapper:hover { transform: scale(1.05); background: rgba(255,255,255,0.15); }
-
-        .saved-icon {
-            width: 100%;
-            aspect-ratio: 1/1;
-            border-radius: 22px;
-            object-fit: cover;
-            cursor: pointer;
-        }
-
-        .btn-action {
-            position: absolute;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: none;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            z-index: 5;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .del-btn { top: -8px; right: -8px; background: #ff3b30; }
-        .dl-btn { bottom: -8px; right: -8px; background: #34C759; text-decoration: none; font-size: 10px; }
-
-        .footer-note { margin-top: 60px; opacity: 0.3; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
-
+        .disclaimer { margin-top: 50px; font-size: 10px; opacity: 0.3; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
     <section class="hero">
-        <div class="gyro-container" id="gBox">
-            <div class="gyro-inner">V</div>
-        </div>
-        <h1>Icon Studio</h1>
-        <p style="opacity: 0.4; font-family: 'Orbitron'; font-size: 10px; letter-spacing: 4px; margin-top: 15px;">2026 EDITION</p>
-        <button class="btn" onclick="document.getElementById('edit-sec').scrollIntoView()" style="margin-top: 50px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff;">LAUNCH ENGINE</button>
+        <div class="gyro-container" id="gBox"><div class="gyro-inner">V</div></div>
+        <h1>Studio</h1>
+        <button class="btn" onclick="document.getElementById('edit').scrollIntoView()" style="background: transparent; border: 1px solid #fff; color: #fff; margin-top: 30px;">OPEN STUDIO</button>
     </section>
 
-    <section class="section" id="edit-sec">
+    <section class="section" id="edit">
         <div class="card">
-            <h3 style="font-family: 'Orbitron'; letter-spacing: 3px; margin-bottom: 40px; color: var(--accent);">PROCESSING</h3>
-            <input type="file" id="upInput" accept="image/*" hidden>
-            <button class="btn" onclick="document.getElementById('upInput').click()">LOAD IMAGE</button>
-            
-            <div id="crop-wrap" style="margin: 40px 0; min-height: 150px; border: 1px dashed rgba(255,255,255,0.1); border-radius: 30px; overflow: hidden;">
-                <img id="img-prev" src="">
-            </div>
-
-            <div id="ctrl-panel" style="display:none;">
-                <button class="btn btn-magic" onclick="eraseBG()">MAGIC ERASE</button>
-                <button class="btn" onclick="saveVault()">VAULT ICON</button>
+            <input type="file" id="up" accept="image/*" hidden>
+            <button class="btn" onclick="document.getElementById('up').click()">LOAD IMAGE</button>
+            <div id="crop-w" style="margin: 30px 0;"><img id="pv" src=""></div>
+            <div id="pnl" style="display:none;">
+                <button class="btn btn-magic" onclick="erase()">MAGIC ERASE</button>
+                <button class="btn" onclick="save()">SAVE VAULT</button>
             </div>
         </div>
     </section>
 
-    <section class="section" id="vlt-sec">
-        <h2 style="font-family: 'Syncopate'; letter-spacing: 8px; font-size: 1.2rem;">MY VAULT</h2>
-        <div class="vault-container" id="vlt-grid"></div>
-        <div class="footer-note">V CONNECT • PRIVACY SECURED</div>
+    <section class="section">
+        <h2 style="font-family: 'Syncopate'; font-size: 1rem;">MY VAULT</h2>
+        <div class="vault-container" id="grid"></div>
+        <div class="disclaimer">V CONNECT © 2026 | PRIVATE CLIENT-SIDE UTILITY | NO DATA COLLECTED</div>
     </section>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
-        // --- GYRO STABILITY ENGINE ---
         const gBox = document.getElementById('gBox');
         let tX = 0, tY = 0, cX = 0, cY = 0;
+        window.addEventListener('deviceorientation', (e) => { tX = e.gamma/2; tY = (e.beta-45)/2; });
+        function anim() { cX+=(tX-cX)*0.1; cY+=(tY-cY)*0.1; gBox.style.transform=`rotateY(${cX}deg) rotateX(${-cY}deg)`; requestAnimationFrame(anim); }
+        anim();
 
-        window.addEventListener('deviceorientation', (e) => {
-            tX = Math.max(-18, Math.min(18, e.gamma)); 
-            tY = Math.max(-18, Math.min(18, e.beta - 45)); 
-        });
+        let crp;
+        const up = document.getElementById('up');
+        const pv = document.getElementById('pv');
 
-        document.addEventListener('mousemove', (e) => {
-            tX = (window.innerWidth / 2 - e.pageX) / 30;
-            tY = (window.innerHeight / 2 - e.pageY) / 30;
-        });
-
-        function animate() {
-            cX += (tX - cX) * 0.1;
-            cY += (tY - cY) * 0.1;
-            gBox.style.transform = `rotateY(${cX}deg) rotateX(${-cY}deg)`;
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // --- IMAGE PROCESSING ---
-        let cropObj;
-        const upInput = document.getElementById('upInput');
-        const imgPrev = document.getElementById('img-prev');
-
-        upInput.onchange = (e) => {
-            const f = e.target.files[0];
+        up.onchange = (e) => {
             const r = new FileReader();
             r.onload = () => {
-                imgPrev.src = r.result;
-                if (cropObj) cropObj.destroy();
-                cropObj = new Cropper(imgPrev, { aspectRatio: 1, viewMode: 1, guides: false, background: false });
-                document.getElementById('ctrl-panel').style.display = 'block';
+                pv.src = r.result;
+                if (crp) crp.destroy();
+                crp = new Cropper(pv, { aspectRatio: 1, viewMode: 1 });
+                document.getElementById('pnl').style.display = 'block';
             };
-            r.readAsDataURL(f);
+            r.readAsDataURL(e.target.files[0]);
         };
 
-        function eraseBG() {
-            const canv = cropObj.getCroppedCanvas();
-            const ctx = canv.getContext('2d');
-            const pixels = ctx.getImageData(0, 0, canv.width, canv.height);
-            const d = pixels.data;
-            const rR = d[0], gR = d[1], bR = d[2]; // Sample top-left
-
-            for (let i = 0; i < d.length; i += 4) {
-                if (Math.abs(d[i]-rR) < 50 && Math.abs(d[i+1]-gR) < 50 && Math.abs(d[i+2]-bR) < 50) {
-                    d[i+3] = 0;
-                }
+        function erase() {
+            const cv = crp.getCroppedCanvas();
+            const ct = cv.getContext('2d');
+            const px = ct.getImageData(0,0,cv.width,cv.height);
+            const d = px.data;
+            const r=d[0], g=d[1], b=d[2];
+            for (let i=0; i<d.length; i+=4) {
+                if (Math.abs(d[i]-r)<50 && Math.abs(d[i+1]-g)<50 && Math.abs(d[i+2]-b)<50) d[i+3]=0;
             }
-            ctx.putImageData(pixels, 0, 0);
-            imgPrev.src = canv.toDataURL();
-            cropObj.replace(imgPrev.src);
+            ct.putImageData(px,0,0);
+            pv.src = cv.toDataURL();
+            crp.replace(pv.src);
         }
 
-        // --- VAULT STORAGE ---
-        function saveVault() {
-            const imgData = cropObj.getCroppedCanvas({ width: 512, height: 512 }).toDataURL("image/png");
-            let v = JSON.parse(localStorage.getItem('vVault_2026') || '[]');
-            v.unshift(imgData);
-            localStorage.setItem('vVault_2026', JSON.stringify(v));
-            drawVault();
-            alert("Icon Locked to Vault.");
+        function save() {
+            const img = crp.getCroppedCanvas({width:512, height:512}).toDataURL();
+            let v = JSON.parse(localStorage.getItem('vVlt') || '[]');
+            v.unshift(img);
+            localStorage.setItem('vVlt', JSON.stringify(v));
+            draw();
         }
 
-        function delIcon(idx) {
-            let v = JSON.parse(localStorage.getItem('vVault_2026') || '[]');
-            v.splice(idx, 1);
-            localStorage.setItem('vVault_2026', JSON.stringify(v));
-            drawVault();
+        function del(i) {
+            let v = JSON.parse(localStorage.getItem('vVlt') || '[]');
+            v.splice(i,1);
+            localStorage.setItem('vVlt', JSON.stringify(v));
+            draw();
         }
 
-        function drawVault() {
-            const v = JSON.parse(localStorage.getItem('vVault_2026') || '[]');
-            const g = document.getElementById('vlt-grid');
-            if(v.length === 0) { g.innerHTML = '<p style="grid-column: 1/-1; opacity: 0.1;">VAULT EMPTY</p>'; return; }
-            g.innerHTML = v.map((img, i) => `
+        function draw() {
+            const v = JSON.parse(localStorage.getItem('vVlt') || '[]');
+            const g = document.getElementById('grid');
+            g.innerHTML = v.map((m, i) => `
                 <div class="icon-wrapper">
-                    <button class="btn-action del-btn" onclick="delIcon(${i})">×</button>
-                    <a href="${img}" download="V_ICON_${i}.png" class="btn-action dl-btn">SAVE</a>
-                    <img src="${img}" class="saved-icon" onclick="window.open(this.src)">
+                    <button class="del-btn btn-action" onclick="del(${i})">×</button>
+                    <a href="${m}" download="icon.png" class="dl-btn btn-action">↓</a>
+                    <img src="${m}" class="saved-icon">
                 </div>
             `).join('');
         }
-
-        window.onload = drawVault;
+        window.onload = draw;
     </script>
 </body>
 </html>
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 25px;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-
-        .icon-wrapper {
-            position: relative;
-            background: var(--glass-heavy);
-            border-radius: 24px;
-            padding: 10px;
-            border: 1px solid var(--border);
-        }
-
-        .saved-icon {
-            width: 100%;
-            aspect-ratio: 1/1;
-            border-radius: 18px;
-            object-fit: cover;
-            cursor: pointer;
-        }
-
-        .btn-action {
-            position: absolute;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: none;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 16px;
-            z-index: 5;
-        }
-
-        .delete-x { top: -10px; right: -10px; background: #ff3b30; }
-        .download-v { bottom: -10px; right: -10px; background: #34C759; text-decoration: none; font-size: 12px; }
-
-    </style>
-</head>
-<body>
-
-    <section class="hero">
-        <div class="gyro-container" id="gyro-box">
-            <div class="gyro-inner">V</div>
-        </div>
-        <h1>Studio</h1>
-        <p style="opacity: 0.5; font-family: 'Orbitron'; letter-spacing: 2px; margin-top: 20px;">Elite Icon Engine</p>
-        <button class="btn" onclick="document.getElementById('creator-sec').scrollIntoView()" style="margin-top: 40px; background: transparent; border: 1px solid #fff; color: #fff;">START ENGINE</button>
-    </section>
-
-    <section class="section" id="creator-sec">
-        <div class="card">
-            <h2 style="font-family: 'Orbitron'; margin-bottom: 30px;">CUSTOMIZE</h2>
-            <input type="file" id="upload" accept="image/*" hidden>
-            <button class="btn" onclick="document.getElementById('upload').click()">CHOOSE IMAGE</button>
-            
-            <div id="crop-area" style="margin: 30px 0; min-height: 200px;">
-                <img id="image-preview" src="">
-            </div>
-
-            <div id="controls" style="display:none;">
-                <button class="btn btn-magic" onclick="magicEraser()">MAGIC ERASE BG</button>
-                <button class="btn" onclick="saveToVault()">SAVE TO VAULT</button>
-            </div>
-        </div>
-    </section>
-
-    <section class="section" id="vault-sec">
-        <h1 style="font-size: 1.5rem; letter-spacing: 5px;">MY VAULT</h1>
-        <div class="vault-container" id="vault-grid">
-            </div>
-    </section>
-
-    <canvas id="proc-canvas" style="display:none;"></canvas>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <script>
-        // --- 1. GYRO STABILITY LOGIC ---
-        const gyroBox = document.getElementById('gyro-box');
-        let tX = 0, tY = 0, cX = 0, cY = 0;
-
-        window.addEventListener('deviceorientation', (e) => {
-            tX = Math.max(-20, Math.min(20, e.gamma)); 
-            tY = Math.max(-20, Math.min(20, e.beta - 45)); 
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            tX = (window.innerWidth / 2 - e.pageX) / 25;
-            tY = (window.innerHeight / 2 - e.pageY) / 25;
-        });
-
-        function smoothMove() {
-            cX += (tX - cX) * 0.1;
-            cY += (tY - cY) * 0.1;
-            gyroBox.style.transform = `rotateY(${cX}deg) rotateX(${-cY}deg)`;
-            requestAnimationFrame(smoothMove);
-        }
-        smoothMove();
-
-        // --- 2. IMAGE ENGINE ---
-        let cropper;
-        const upload = document.getElementById('upload');
-        const preview = document.getElementById('image-preview');
-
-        upload.onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                preview.src = reader.result;
-                if (cropper) cropper.destroy();
-                cropper = new Cropper(preview, { aspectRatio: 1, viewMode: 1 });
-                document.getElementById('controls').style.display = 'block';
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        };
-
-        function magicEraser() {
-            const canvas = cropper.getCroppedCanvas();
-            const ctx = canvas.getContext('2d');
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const data = imgData.data;
-            const rB = data[0], gB = data[1], bB = data[2];
-
-            for (let i = 0; i < data.length; i += 4) {
-                if (Math.abs(data[i] - rB) < 45 && Math.abs(data[i+1] - gB) < 45 && Math.abs(data[i+2] - bB) < 45) {
-                    data[i+3] = 0;
-                }
-            }
-            ctx.putImageData(imgData, 0, 0);
-            preview.src = canvas.toDataURL();
-            cropper.replace(preview.src);
-        }
-
-        // --- 3. VAULT MANAGEMENT ---
-        function saveToVault() {
-            const dataUrl = cropper.getCroppedCanvas({ width: 512, height: 512 }).toDataURL("image/png");
-            let vault = JSON.parse(localStorage.getItem('vVault') || '[]');
-            vault.unshift(dataUrl);
-            localStorage.setItem('vVault', JSON.stringify(vault));
-            renderVault();
-            alert("Icon Locked in Vault!");
-        }
-
-        function deleteIcon(index) {
-            let vault = JSON.parse(localStorage.getItem('vVault') || '[]');
-            vault.splice(index, 1);
-            localStorage.setItem('vVault', JSON.stringify(vault));
-            renderVault();
-        }
-
-        function renderVault() {
-            const vault = JSON.parse(localStorage.getItem('vVault') || '[]');
-            const grid = document.getElementById('vault-grid');
-            grid.innerHTML = vault.map((img, i) => `
-                <div class="icon-wrapper">
-                    <button class="btn-action delete-x" onclick="deleteIcon(${i})">×</button>
-                    <a href="${img}" download="v-icon-${i}.png" class="btn-action download-v">↓</a>
-                    <img src="${img}" class="saved-icon" onclick="window.open(this.src)">
-                </div>
-            `).join('');
-        }
-
-        window.onload = renderVault;
-    </script>
-</body>
-</html>
-
